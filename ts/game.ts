@@ -3,6 +3,9 @@ const newGameScreen = document.getElementById("newGameScreen") as HTMLDivElement
 const levelScreen = document.getElementById("levelScreen") as HTMLDivElement;
 const helpScreen = document.getElementById("helpScreen") as HTMLDivElement;
 
+/********************************************************************************/
+// Tela de Título
+
 const btnPlay = document.getElementById("btnPlay") as HTMLButtonElement;
 btnPlay.addEventListener("click", () => {
     titleScreen.hidden = true;
@@ -19,6 +22,17 @@ btnHelp.addEventListener("click", () => {
     helpScreen.hidden = false;
 });
 
+const btnBack = document.getElementById("btnBack") as HTMLButtonElement;
+btnBack.addEventListener("click", () => {
+    titleScreen.hidden = false;
+    newGameScreen.hidden = true;
+    levelScreen.hidden = true;
+    helpScreen.hidden = true;
+});
+
+/********************************************************************************/
+// Tela Novo Jogo
+
 const btnStart = document.getElementById("btnStart") as HTMLButtonElement;
 btnStart.addEventListener("click", () => {
     titleScreen.hidden = true;
@@ -30,16 +44,6 @@ btnStart.addEventListener("click", () => {
     startGame(Number(players.value));
 });
 
-
-
-const btnBack = document.getElementById("btnBack") as HTMLButtonElement;
-btnBack.addEventListener("click", () => {
-    titleScreen.hidden = false;
-    newGameScreen.hidden = true;
-    levelScreen.hidden = true;
-    helpScreen.hidden = true;
-});
-
 const btnBack2 = document.getElementById("btnBack2") as HTMLButtonElement;
 btnBack2.addEventListener("click", () => {
     titleScreen.hidden = false;
@@ -48,7 +52,35 @@ btnBack2.addEventListener("click", () => {
     helpScreen.hidden = true;
 });
 
+/********************************************************************************/
+// Tela de Jogo
+
+const pieces = [
+    [0,0], [0,1], [0,2], [0,3], [0,4], [0,5], [0,6],
+    [1,1], [1,2], [1,3], [1,4], [1,5], [1,6],
+    [2,2], [2,3], [2,4], [2,5], [2,6],
+    [3,3], [3,4], [3,5], [3,6],
+    [4,4], [4,5], [4,6],
+    [5,5], [5,6],
+    [6,6]
+];
+
+var playerHand:number[][];
+
 function startGame(playerCount:number) {
     const txtPlayers = document.getElementById("playerCount") as HTMLParagraphElement;
     txtPlayers.textContent = playerCount + " Jogadores";
+
+    let gamePieces = pieces.sort(() => Math.random() - 0.5);
+
+    playerHand = gamePieces.slice(0, 7);
+    console.log(playerHand);
+    const divPlayerHand = document.getElementById("playerHand") as HTMLDivElement;
+    
+    let pieceButton = document.createElement("button") as HTMLButtonElement;
+    pieceButton.className = "piece";
+    pieceButton.innerHTML = "<div class='half'>" + playerHand?[0][0] + "</div><div class='half'>" + playerHand?[0][1] + "</div>";
+    divPlayerHand.appendChild(pieceButton);
+
+    //<button class="piece"><div class="half">1</div><div class="half">2</div></button>
 }
