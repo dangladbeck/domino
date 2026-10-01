@@ -66,6 +66,7 @@ const pieces = [
 ];
 
 var playerHand:number[][];
+var aiHand:number[][][];
 
 function startGame(playerCount:number) {
     const txtPlayers = document.getElementById("playerCount") as HTMLParagraphElement;
@@ -74,13 +75,21 @@ function startGame(playerCount:number) {
     let gamePieces = pieces.sort(() => Math.random() - 0.5);
 
     playerHand = gamePieces.slice(0, 7);
-    console.log(playerHand);
     const divPlayerHand = document.getElementById("playerHand") as HTMLDivElement;
     
-    let pieceButton = document.createElement("button") as HTMLButtonElement;
-    pieceButton.className = "piece";
-    pieceButton.innerHTML = "<div class='half'>" + playerHand?[0][0] + "</div><div class='half'>" + playerHand?[0][1] + "</div>";
-    divPlayerHand.appendChild(pieceButton);
+    playerHand.forEach(element => {
+        let pieceButton = document.createElement("button") as HTMLButtonElement;
+        pieceButton.className = "piece";
+        pieceButton.innerHTML = "<div class='half'>" + element[0] + "</div><div class='half'>" + element[1] + "</div>";
+        divPlayerHand.appendChild(pieceButton);
+    });
+
+    for (let n = 2; n <= playerCount; n++)
+    {
+        //aiHand[n-2] = [][];
+    }
+
+    
 
     //<button class="piece"><div class="half">1</div><div class="half">2</div></button>
 }
