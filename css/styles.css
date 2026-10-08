@@ -25,6 +25,10 @@ div#aiHand4 {
     display: flex;
 }
 
+div#table {
+    display: flex;
+}
+
 button.piece {
     width: 50px;
     height: 100px;
@@ -56,3 +60,4 @@ div.open {
     border: 1px solid black;
     background-color: cornsilk;
 }
+

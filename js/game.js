@@ -27,6 +27,7 @@ btnBack.addEventListener("click", () => {
 });
 /********************************************************************************/
 // Tela Novo Jogo
+var playerCount = 2;
 const btnStart = document.getElementById("btnStart");
 btnStart.addEventListener("click", () => {
     titleScreen.hidden = true;
@@ -34,7 +35,8 @@ btnStart.addEventListener("click", () => {
     levelScreen.hidden = false;
     helpScreen.hidden = true;
     const players = document.querySelector('input[name=players]:checked');
-    startGame(Number(players.value));
+    playerCount = Number(players.value);
+    startGame();
 });
 const btnBack2 = document.getElementById("btnBack2");
 btnBack2.addEventListener("click", () => {
@@ -63,7 +65,11 @@ var playerHand;
 var aiHand = [];
 var heapIndex = 7;
 var gameState = 0; // start, player X turn, game over
-function startGame(playerCount) {
+var iaState = 0;
+var freeNum1;
+var freeNum2;
+var biggerIndex;
+function startGame() {
     const txtPlayers = document.getElementById("playerCount");
     txtPlayers.textContent = playerCount + " Jogadores";
     let gamePieces = pieces.sort(() => Math.random() - 0.5);
@@ -102,7 +108,7 @@ function startGame(playerCount) {
     // 2 - Isso pode falhar em 0,29% das vezes. Neste caso, considera-se que o jogador humano começa.
     let biggerValue = -1;
     let biggerPlayer = 1;
-    let biggerIndex = 0;
+    biggerIndex = 0;
     for (let n = 0; n < playerHand.length; n++) {
         if (playerHand[n][0] == playerHand[n][1]) {
             if (playerHand[n][0] > biggerValue) {
@@ -133,28 +139,69 @@ function startGame(playerCount) {
     else // Vez de algum jogador IA
      {
         btnNext.disabled = false;
-        btnNext.addEventListener("click", () => {
-            let aiDiv = document.getElementById("aiHand" + gameState);
-            let piece = aiDiv.children[biggerIndex];
-            let pieceDiv = document.createElement("div");
-            pieceDiv.className = "open";
-            pieceDiv.innerHTML = "<div class='half'>" + piece.children[0].textContent + "</div><div class='half'>" + piece.children[1].textContent + "</div>";
-            divTable.appendChild(pieceDiv);
-            aiDiv.removeChild(piece);
-            txtStatus.textContent = "";
-        });
+        btnNext.addEventListener("click", firstAIDraw);
     }
 }
+// O clique das pedras do jogador humano. Retira da mão e coloca na mesa.
 function playerSetPiece(event) {
+    // remove a pedra da mão do jogador
     let piece = event.currentTarget;
     divPlayerHand.removeChild(piece);
+    // adiciona a pedra na mesa
     let pieceDiv = document.createElement("div");
     pieceDiv.className = "open";
     pieceDiv.innerHTML = "<div class='half'>" + piece.children[0].textContent + "</div><div class='half'>" + piece.children[1].textContent + "</div>";
     divTable.appendChild(pieceDiv);
-    txtStatus.textContent = "";
+    freeNum1 = piece.children[0].textContent;
+    freeNum2 = piece.children[1].textContent;
+    // passa a vez para o próximo jogador
+    gameState = 2;
+    iaState = 0;
+    txtStatus.textContent = "Vez do jogador 2.";
+    btnNext.addEventListener("click", continueGame);
 }
+function firstAIDraw() {
+    let aiDiv = document.getElementById("aiHand" + gameState);
+    let piece = aiDiv.children[biggerIndex];
+    let pieceDiv = document.createElement("div");
+    pieceDiv.className = "open";
+    pieceDiv.innerHTML = "<div class='half'>" + piece.children[0].textContent + "</div><div class='half'>" + piece.children[1].textContent + "</div>";
+    divTable.appendChild(pieceDiv);
+    aiDiv.removeChild(piece);
+    txtStatus.textContent = "O jogador " + gameState + " começou com a pedra " + piece.children[0].textContent + " e " + piece.children[1].textContent + ".";
+    iaState = 1;
+    btnNext.removeEventListener("click", firstAIDraw);
+    btnNext.addEventListener("click", continueGame);
+}
+// O clique do botão Continuar, que realiza as ações da IA
 function continueGame() {
+    var _a, _b, _c, _d;
+    if (iaState == 0) // pronto para jogar, faz a jogada
+     {
+        let aiHand = document.getElementById("aiHand" + gameState);
+        for (let n = 1; n < aiHand.children.length; n++) {
+            let n1 = (_b = (_a = aiHand.children[n]) === null || _a === void 0 ? void 0 : _a.children[0]) === null || _b === void 0 ? void 0 : _b.textContent;
+            let n2 = (_d = (_c = aiHand.children[n]) === null || _c === void 0 ? void 0 : _c.children[1]) === null || _d === void 0 ? void 0 : _d.textContent;
+            if (n1 == freeNum1 || n1 == freeNum2 || n2 == freeNum1 || n2 == freeNum2) { // joga a primeira que encontra
+                let piece = aiHand.children[n];
+                let pieceDiv = document.createElement("div");
+                pieceDiv.className = "open";
+                pieceDiv.innerHTML = "<div class='half'>" + piece.children[0].textContent + "</div><div class='half'>" + piece.children[1].textContent + "</div>";
+                divTable.appendChild(pieceDiv); // só coloca à direita
+                aiHand.removeChild(piece);
+                txtStatus.textContent = "O jogador " + gameState + " colocou a pedra " + piece.children[0].textContent + " e " + piece.children[1].textContent + " do lado direito.";
+                iaState = 1;
+                break;
+            }
+        }
+    }
+    else if (iaState == 1) // passa para o próximo jogador
+     {
+        gameState += 1;
+        if (gameState > playerCount)
+            gameState = 1;
+        txtStatus.textContent = "Vez do jogador " + gameState + ".";
+    }
 }
 export {};
 //# sourceMappingURL=game.js.map
