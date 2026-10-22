@@ -86,6 +86,7 @@ var biggerIndex:number;
 var firstTurn:boolean;
 
 
+
 function startGame()
  {
     const txtPlayers = document.getElementById("playerCount") as HTMLParagraphElement;
@@ -178,6 +179,7 @@ function startGame()
         firstPiece.disabled = false;
         btnNext.disabled = true;
         gameState = 1;
+        iaState = 0; // ready
     }
     else // Vez de algum jogador IA
     {
@@ -314,6 +316,7 @@ function setPlayerPiece(e:MouseEvent)
     {
         freeNum1 = piece.children[0]!.textContent;
         freeNum2 = piece.children[1]!.textContent;
+        firstTurn = false;
     }
     else
     {
@@ -357,6 +360,25 @@ function firstAIDraw()
 // O clique do botão Continuar, que realiza as ações da IA
 function continueGame() 
 {
+    if (iaState == 0) {
+        if (firstTurn) {
+            firstTurn = false;
+
+            // retira a pedra da mão do jogador
+            let aiHand = document.getElementById("aiHand" + playerTurn) as HTMLDivElement;
+            let piece = aiHand!.children[biggerIndex];
+            aiHand.removeChild(piece!);
+
+            // coloca a pedra na mesa
+            let pieceDiv = document.createElement("div") as HTMLDivElement;
+            pieceDiv.className = "open";
+            pieceDiv.innerHTML = "<div class='half'>" + piece!.children[0]!.textContent + "</div><div class='half'>" + piece!.children[1]!.textContent + "</div>";
+            divTable.appendChild(pieceDiv);
+        }
+    }
+
+
+
     /*if (iaState == 0) // pronto para jogar, faz a jogada
     {
         let aiHand = document.getElementById("aiHand" + gameState) as HTMLDivElement;
